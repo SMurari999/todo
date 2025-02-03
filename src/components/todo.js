@@ -1,9 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../styles/todo.css";
 
 function App() {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState("");
+  const [number,setNumber] = useState(0)
+  
+  useEffect(() =>{
+    const length =()=>{
+      setNumber(tasks.length);
+    }
+    length()
+  },[tasks])
+  
 
   const addTask = () => {
     if (newTask.trim() !== "") {
@@ -45,6 +54,7 @@ function App() {
           </li>
         ))}
       </ul>
+      <h3>Number of tasks {number}</h3>
     </div>
   );
 }
