@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useRef } from "react";
 import "../styles/todo.css";
 
 function App() {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState("");
   const [number,setNumber] = useState(0)
-  
+  const inputRef = useRef(null); 
   useEffect(() =>{
     const length =()=>{
       setNumber(tasks.length);
@@ -13,11 +13,15 @@ function App() {
     length()
   },[tasks])
   
+  useEffect(() => {
+    inputRef.current.focus(); 
+  }, []);
 
   const addTask = () => {
     if (newTask.trim() !== "") {
       setTasks([...tasks, { text: newTask, completed: false }]);
       setNewTask("");
+      inputRef.current.focus();
     }
   };
 
@@ -38,6 +42,7 @@ function App() {
       <div className="input-section">
         <input
           type="text"
+          ref={inputRef}
           placeholder="Add a new task..."
           value={newTask}
           onChange={(e) => setNewTask(e.target.value)}
