@@ -1,56 +1,43 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { addTodo, toggleTodo, deleteTodo } from "../store";
-import "../styles/todo.css";
+import React, { useState } from "react";
+import { AddTodo } from "../api/api";
 
-function App() {
-  const [newTask, setNewTask] = useState("");
-  const inputRef = useRef(null);
 
-  // Redux hooks
-  const tasks = useSelector((state) => state.todos); // Fetch tasks from Redux
-  const dispatch = useDispatch(); // Dispatch actions to Redux
+const TodoList = ({ data, setData }) => {
+  const [newTodo, setNewTodo] = useState("");
 
-  // Focus on input field when component mounts
-  useEffect(() => {
-    inputRef.current.focus();
-  }, []);
-
-  const handleAddTask = () => {
-    if (newTask.trim() !== "") {
-      dispatch(addTodo(newTask)); // Dispatch Redux action
-      setNewTask(""); // Clear input
-      inputRef.current.focus();
-    }
+  const handleAddTodo = () => {
+    if (!newTodo.trim()) return;
+    
+    AddTodo(newTodo).then((todo) => {
+      setData((prev) => [...prev, todo]);
+      setNewTodo("");
+    });
   };
 
   return (
-    <div className="todo-container">
-      <h1>To-Do List</h1>
-      <div className="input-section">
+    <div className="space-y-4">
+      <div className="flex space-x-2">
         <input
           type="text"
-          ref={inputRef}
+          value={newTodo}
+          onChange={(e) => setNewTodo(e.target.value)}
           placeholder="Add a new task..."
-          value={newTask}
-          onChange={(e) => setNewTask(e.target.value)}
+          className="p-2 border rounded flex-grow"
         />
-        <button onClick={handleAddTask}>Add</button>
+        <button onClick={handleAddTodo} className="p-2 bg-blue-500 text-white rounded">
+          Add
+        </button>
       </div>
 
-      <ul>
-        {tasks.map((task) => (
-          <li key={task.id} className={task.completed ? "completed" : ""}>
-            <span onClick={() => dispatch(toggleTodo(task.id))}>{task.text}</span>
-            <button className="delete-btn" onClick={() => dispatch(deleteTodo(task.id))}>
-              ❌
-            </button>
+      <ul className="space-y-2">
+        {data.map((todo) => (
+          <li key={todo.id} className="p-2 border rounded bg-gray-100">
+            {todo.text}
           </li>
         ))}
       </ul>
-      <h3>Number of tasks: {tasks.length}</h3>
     </div>
   );
-}
+};
 
-export default App;
+export default TodoList;
